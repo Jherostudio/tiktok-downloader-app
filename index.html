@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Ajuste Responsivo Móvil -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- PWA Configuración (Ícono e Instalación) -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.svg">
+
+    <title>FastTok Downloader</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        input {
+            padding: 14px;
+            width: 100%;
+            max-width: 320px;
+            border-radius: 8px;
+            border: none;
+            box-sizing: border-box;
+            font-size: 16px;
+            /* Evita que los iPhones hagan zoom al tocar el input */
+        }
+
+        /* Envoltorio para alinear botones en móviles y PC */
+        .buttons-row {
+            display: flex;
+            flex-direction: column;
+            /* Móvil: Uno debajo del otro */
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        @media (min-width: 450px) {
+            .buttons-row {
+                flex-direction: row;
+                /* PC: Uno al lado del otro */
+                justify-content: center;
+                gap: 15px;
+            }
+        }
+
+        button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #22c55e;
+            /* Verde original */
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            width: 100%;
+            max-width: 320px;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background: #16a34a;
+        }
+
+        /* Estilos para el botón PRO */
+        .btn-pro {
+            background: #f59e0b;
+            /* Naranja/Dorado */
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .btn-pro:hover {
+            background: #d97706;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Estilo para los espacios de anuncios (Google Ads) */
+        .ad-space {
+            margin: 20px auto;
+            width: 320px;
+            height: 50px;
+            background: #1e293b;
+            border: 1px dashed #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .loader {
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Overlay para el Anuncio (Modal) */
+        .ad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.98);
+            display: none;
+            /* Oculto por defecto */
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .ad-overlay h2 {
+            color: #f8fafc;
+            margin-bottom: 10px;
+        }
+
+        .countdown-text {
+            color: #cbd5e1;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .btn-skip {
+            background: #3b82f6;
+            /* Azul */
+            display: none;
+            /* Oculto hasta que llegue a 0 */
+        }
+
+        .btn-skip:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>⚡ FastTok</h1>
+        <p>Descarga videos sin marca de agua</p>
+
+        <!-- Espacio superior para Native Banner de Adsterra -->
+        <div style="margin: 20px auto; width: 100%; text-align: center; min-height: 50px;">
+            <script async="async" data-cfasync="false"
+                src="//pl29080784.profitablecpmratenetwork.com/0a2bd0d2ec688b9ec73b9a4005be3e40/invoke.js"></script>
+            <div id="container-0a2bd0d2ec688b9ec73b9a4005be3e40"></div>
+        </div>
+
+        <input id="url" placeholder="Pega link aquí">
+
+        <div class="buttons-row">
+            <!-- Botón gratis normal -->
+            <button onclick="download()">Descargar Normal</button>
+
+            <!-- Botón para monetizar (Checkout, Suscripción o Afiliado) -->
+            <button class="btn-pro" onclick="downloadPro()">⭐ Download HD PRO</button>
+        </div>
+
+        <div class="loader" id="loader">⏳ Descargando...</div>
+
+        <!-- Espacio inferior (oculto por ahora, puedes agregar otro banner aquí en el futuro) -->
+
+        <!-- Footer / Créditos -->
+        <div style="margin-top: 50px; font-size: 13px; color: #64748b; letter-spacing: 0.5px;">
+            Created by <strong style="color: #94a3b8;">Jhero Studio</strong> &copy; 2026
+        </div>
+    </div>
+
+    <!-- Modal o Overlay de Anuncio -->
+    <div class="ad-overlay" id="adOverlay">
+        <h2>🔥 Desbloqueando HD PRO...</h2>
+        <div class="countdown-text">Tu descarga estará lista en <span id="countdown">10</span> segundos</div>
+
+        <!-- Recuadro para futuro anuncio o Direct Link de Adsterra -->
+        <!-- En el futuro puedes crear un 'Direct Link' en Adsterra y ponerlo aquí -->
+
+        <button class="btn-skip" id="btnSkip" onclick="startProDownload()">⬇️ Saltar Anuncio y Descargar</button>
+    </div>
+
+    <script>
+        async function download() {
+            const url = document.getElementById("url").value;
+            const loader = document.getElementById("loader");
+
+            if (!url) {
+                alert("Pega un link primero");
+                return;
+            }
+
+            loader.style.display = "block";
+
+            try {
+                const res = await fetch("/download", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ url })
+                });
+
+                const blob = await res.blob();
+                const link = document.createElement("a");
+
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "video.mp4";
+                link.click();
+
+            } catch (err) {
+                alert("Error descargando");
+            }
+
+            loader.style.display = "none";
+        }
+
+        // Función para el botón PRO (con Publicidad)
+        function downloadPro() {
+            const url = document.getElementById("url").value;
+            if (!url) {
+                alert("Pega un link primero");
+                return;
+            }
+
+            // Mostrar la ventana del anuncio
+            const overlay = document.getElementById("adOverlay");
+            const btnSkip = document.getElementById("btnSkip");
+            const countdownSpan = document.getElementById("countdown");
+
+            overlay.style.display = "flex";
+            btnSkip.style.display = "none";
+
+            let timeLeft = 10; // Segundos obligatorios de anuncio
+            countdownSpan.textContent = timeLeft;
+
+            const timer = setInterval(() => {
+                timeLeft--;
+                countdownSpan.textContent = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    countdownSpan.innerHTML = "¡Listo!";
+                    btnSkip.style.display = "block"; // Habilitar el botón de descarga real
+                }
+            }, 1000);
+        }
+
+        // Se ejecuta cuando pasan los 10 segundos y el usuario da click a saltar
+        function startProDownload() {
+            document.getElementById("adOverlay").style.display = "none";
+
+            // 💰 Abrir el Smartlink de Adsterra en una pestaña nueva para generar ganancias
+            const smartLink = "https://www.profitablecpmratenetwork.com/tsk9ksw8?key=206a5607049028a772a7a568c6d1838c";
+            window.open(smartLink, "_blank");
+
+            // ⬇️ Empieza la descarga del video en la pestaña actual
+            download();
+        }
+
+        // Registrar Service Worker para poder ser instalada (PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(error => {
+                    console.log('Fallo el registro del Service Worker:', error);
+                });
+            });
+        }
+    </script>
+
+    <!-- Scripts de Adsterra (Social Bar y Popunder) -->
+    <script type="text/javascript"
+        src="//pl29080783.profitablecpmratenetwork.com/7c/16/bd/7c16bd3096db3b3f54157345620814f4.js"></script>
+    <script type="text/javascript"
+        src="//pl29080782.profitablecpmratenetwork.com/50/26/2b/50262b6046fd6b5f2684e8b9f0840880.js"></script>
+</body>
+
+</html>
