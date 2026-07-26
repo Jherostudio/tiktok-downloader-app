@@ -181,16 +181,68 @@ async function validateAndResolveUrl(urlInput) {
         throw new Error("La URL es demasiado larga.");
     }
 
-    const trimmedUrl = urlInput.trim();
-    try {
-        const parsedUrl = new URL(trimmedUrl);
-        if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
-            throw new Error("El protocolo de la URL debe ser HTTP o HTTPS.");
+    let currentUrl = urlInput.trim();
+    let redirectsCount = 0;
+    const maxRedirects = 3;
+
+    while (redirectsCount <= maxRedirects) {
+        let parsedUrl;
+        try {
+            parsedUrl = new URL(currentUrl);
+        } catch (e) {
+            throw new Error("El formato de la URL no es válido.");
         }
-        return trimmedUrl;
-    } catch (e) {
-        throw new Error("El formato de la URL no es válido.");
+
+        // 1. Validar protocolo HTTPS
+        if (parsedUrl.protocol !== "https:") {
+            throw new Error("Se requiere HTTPS para la URL de TikTok.");
+        }
+
+        // 2. Validar credenciales
+        if (parsedUrl.username || parsedUrl.password) {
+            throw new Error("No se permiten credenciales incrustadas en la URL.");
+        }
+
+        // 3. Validar puerto
+        if (parsedUrl.port && parsedUrl.port !== "" && parsedUrl.port !== "443") {
+            throw new Error("No se permiten puertos personalizados en la URL.");
+        }
+
+        // 4. Validar formato/tipo de contenido
+        if (isPlaylistOrUnsupportedUrl(parsedUrl)) {
+            throw new Error("No se permiten listas de reproducción (playlists) u otros contenidos no soportados.");
+        }
+
+        // 5. Validar host
+        if (!isValidTikTokHost(parsedUrl.hostname)) {
+            throw new Error("El host de la URL no es un dominio de TikTok permitido.");
+        }
+
+        // 6. Validar DNS (SSRF)
+        const dnsOk = await checkDns(parsedUrl.hostname);
+        if (!dnsOk) {
+            throw new Error("Resolución de host denegada (IP no permitida o privada).");
+        }
+
+        // Si es un dominio de redirección corta, intentar resolverlo
+        if (parsedUrl.hostname === "vm.tiktok.com" || parsedUrl.hostname === "vt.tiktok.com") {
+            try {
+                // Timeout de 5 segundos para redirigir
+                const nextUrl = await getRedirectTarget(currentUrl, 5000);
+                if (nextUrl) {
+                    currentUrl = nextUrl;
+                    redirectsCount++;
+                    continue;
+                }
+            } catch (err) {
+                throw new Error("Error al resolver la redirección de la URL: " + err.message);
+            }
+        }
+
+        return currentUrl;
     }
+
+    throw new Error("Demasiadas redirecciones.");
 }
 
 module.exports = {
