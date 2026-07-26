@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidad | FastTok</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #090d16;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        h1, h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00f2fe, #ff0050);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 18px;
+            margin-top: 30px;
+            -webkit-text-fill-color: #f8fafc;
+            background: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+        p, li {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        a {
+            color: #00f2fe;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .footer-link {
+            margin-top: 40px;
+            display: inline-block;
+            font-size: 14px;
+        }
+        .disclaimer {
+            font-size: 12px;
+            color: #64748b;
+            border: 1px dashed rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Política de Privacidad</h1>
+        <p>Última actualización: Julio 2026</p>
+        
+        <h2>1. Procesamiento de Datos Técnicos</h2>
+        <p>Procesamos únicamente información técnica estrictamente necesaria para prestar el servicio de conversión de video:</p>
+        <ul>
+            <li><strong>Dirección IP:</strong> Se utiliza temporalmente en memoria para mitigar ataques y aplicar el límite de solicitudes (rate limiting). No la guardamos de manera legible permanente; en nuestros logs se encripta mediante un hash irreversible de seguridad.</li>
+            <li><strong>Enlaces de Video:</strong> El enlace que ingresas solo se procesa para obtener el archivo multimedia y es descartado. No guardamos un historial de los videos que descargas.</li>
+        </ul>
+        
+        <h2>2. Eliminación de Archivos Temporales</h2>
+        <p>Todos los archivos descargados y convertidos se almacenan en directorios temporales aislados e inaccesibles al público. Se eliminan inmediatamente del servidor en cuanto finaliza la descarga del archivo hacia tu dispositivo. Adicionalmente, contamos con una tarea de purga automática cada 5 minutos que borra cualquier archivo huérfano.</p>
+        
+        <h2>3. Lo que NO hacemos</h2>
+        <ul>
+            <li>No solicitamos nombres de usuario, contraseñas ni credenciales de redes sociales.</li>
+            <li>No utilizamos cookies de cuentas de TikTok.</li>
+            <li>No accedemos ni descargamos videos marcados como privados.</li>
+            <li>No vendemos ni comercializamos información técnica de nuestros usuarios con terceros.</li>
+        </ul>
+
+        <div class="disclaimer">
+            <strong>Nota legal:</strong> Este texto legal es una plantilla técnica inicial informativa de privacidad y debe ser revisado por un profesional jurídico antes de un lanzamiento comercial oficial.
+        </div>
+
+        <a href="/" class="footer-link">← Volver a FastTok</a>
+    </div>
+</body>
+</html>

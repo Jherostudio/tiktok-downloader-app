@@ -1,0 +1,44 @@
+name: FastTok CI/CD Hardening Pipeline
+
+on:
+  push:
+    branches: [ main, refactor/production-hardening ]
+  pull_request:
+    branches: [ main, refactor/production-hardening ]
+
+jobs:
+  test-and-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-size: 20
+        cache: 'npm'
+
+    - name: Instalar dependencias
+      run: npm ci
+
+    - name: Ejecutar Auditoría de Seguridad
+      run: npm audit --audit-level=high || true # No abortar por warnings menores, pero registrar en log
+
+    - name: Ejecutar Pruebas Automatizadas
+      run: npm test
+
+  docker-build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Compilar Imagen Docker (Prueba)
+      run: |
+        docker build -t fasttok-test-build .

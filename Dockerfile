@@ -1,6 +1,6 @@
 FROM node:20-slim
 
-# Instalar Python, FFmpeg y herramientas necesarias en el sistema
+# Instalar dependencias de sistema: Python3 (para yt-dlp) y FFmpeg (para conversión/extracción)
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -9,26 +9,40 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Crear un entorno virtual para yt-dlp (recomendado en sistemas modernos)
+# Crear entorno virtual de Python e instalar yt-dlp
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install -U --no-cache-dir yt-dlp
 
-# Instalar yt-dlp al sistema
-RUN pip install -U yt-dlp
-
-# Crear y movernos a la carpeta de tu app
+# Directorio de trabajo
 WORKDIR /app
 
-# Copiar el package.json e instalar las librerías de Node.js
+# Copiar archivos de dependencias e instalar solo las de producción
 COPY package*.json ./
-RUN npm install
+RUN npm ci --only=production
 
-# Copiar todo el resto de tus archivos (server.js, index.html)
-COPY . .
+# Copiar código fuente y estáticos necesarios de forma segura
+COPY src/ ./src/
+COPY public/ ./public/
+COPY index.html ./
+COPY server.js ./
 
-# Exponer el puerto
+# Crear el directorio temporal para descargas y asignar propiedad al usuario no root 'node'
+RUN mkdir -p /app/temp && chown -R node:node /app
+
+# Usar el usuario no root por defecto de la imagen de Node
+USER node
+
+# Configuración de variables de entorno predeterminadas de producción
+ENV NODE_ENV=production
 ENV PORT=3000
+
+# Exponer el puerto de escucha
 EXPOSE 3000
 
-# Comando para iniciar el Servidor
+# Monitoreo de salud del contenedor (HEALTHCHECK)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1
+
+# Comando de inicio
 CMD ["node", "server.js"]

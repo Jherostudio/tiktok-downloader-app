@@ -1,79 +1,140 @@
-# ⚡ FastTok Downloader
+# ⚡ FastTok Downloader - Versión de Producción
 
-FastTok es una aplicación web rápida y ligera para descargar videos de TikTok (y otras plataformas compatibles con `yt-dlp`) sin complicaciones. Está construida con Node.js, Express y una interfaz PWA amigable para dispositivos móviles.
+FastTok es una aplicación web rápida, segura y ligera para analizar y descargar videos y audio de TikTok (y otras plataformas compatibles) de forma independiente. Esta versión ha sido completamente auditada, reestructurada y endurecida para producción, siguiendo las mejores prácticas de seguridad, arquitectura limpia y experiencia de usuario.
 
-## ✨ Características
+## 🏗️ Arquitectura del Proyecto
 
-- **Descarga Rápida:** Integra `yt-dlp` para procesar y descargar videos en su mejor calidad.
-- **Interfaz Limpia y Responsiva:** Diseño oscuro y minimalista adaptado tanto para móviles como para PC.
-- **Progressive Web App (PWA):** Instalable en dispositivos móviles para una experiencia nativa.
-- **Monetización Integrada:** Incluye un sistema de anuncios (Adsterra) con un botón "HD PRO" que muestra publicidad durante 10 segundos antes de realizar la descarga.
-- **Dockerizado:** Listo para ser desplegado en cualquier entorno compatible con Docker mediante un `Dockerfile` optimizado.
+El backend se ha estructurado de forma modular para garantizar la mantenibilidad y la facilidad de prueba:
 
-## 🛠️ Tecnologías
+```
+src/
+├── app.js                 # Inicialización de Express y middlewares globales
+├── server.js              # Arranque del servidor HTTP y graceful shutdown
+├── config/
+│   ├── env.js             # Validación estricta de variables de entorno (Zod)
+│   └── constants.js       # Constantes del sistema y listas de hosts permitidos
+├── routes/
+│   ├── analyze.routes.js  # Rutas de análisis de enlaces
+│   ├── download.routes.js # Rutas de colas, descargas y flujo de progreso
+│   └── health.routes.js   # Diagnósticos de salud (/health y /ready)
+├── controllers/
+│   ├── analyze.controller.js
+│   └── download.controller.js
+├── services/
+│   ├── metadata.service.js# Extracción segura de metadatos vía yt-dlp
+│   ├── download.service.js# Procesamiento de descargas (spawn) e integración de FFmpeg
+│   ├── cleanup.service.js # Tarea periódica de limpieza de archivos temporales
+│   └── queue.service.js   # Cola de descargas en memoria con límites concurrentes
+├── middleware/
+│   ├── error-handler.js   # Manejador centralizado de errores (oculta stack traces)
+│   ├── rate-limit.js      # Límites de solicitudes por IP (express-rate-limit)
+│   ├── request-id.js      # Trazabilidad con Request ID único por petición
+│   ├── security.js        # Cabeceras Helmet, CSP dinámica y orígenes CORS
+│   └── validate-request.js# Middleware de validación con esquemas Zod
+├── validators/
+│   └── url.validator.js   # Validador de URL robusto y mitigación de ataques SSRF
+└── tests/                 # Suite de pruebas automatizadas con Vitest y Supertest
+```
 
-- **Backend:** Node.js, Express.js
-- **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
-- **Procesamiento de Video:** `yt-dlp`, FFmpeg, Python 3
-- **Contenerización:** Docker
+---
 
-## 🚀 Requisitos Previos
+## 🛡️ Medidas de Seguridad Implementadas
 
-Si deseas ejecutar el proyecto localmente sin Docker, necesitarás tener instalado:
+1. **Mitigación de SSRF (Server-Side Request Forgery):**
+   - El validador estricto de URLs solo permite protocolo HTTPS y dominios oficiales de TikTok.
+   - Resuelve enlaces acortados (`vm.tiktok.com`, `vt.tiktok.com`) de manera manual (máximo 5 redirecciones) usando peticiones `HEAD` rápidas sin descargar contenido.
+   - Resuelve el DNS y bloquea cualquier host que apunte a rangos de IP privadas, loopback, multicast o servicios de metadatos de proveedores cloud (ej: `169.254.169.254`).
+2. **Seguridad contra Inyección de Comandos:**
+   - La ejecución de `yt-dlp` y `ffmpeg` se realiza mediante `spawn` o `execFile` pasando argumentos estructurados en arreglos independientes. Nunca se concatenan cadenas provenientes del usuario para ejecutar comandos.
+3. **Hardening de Express:**
+   - Inyección de cabeceras de seguridad mediante `Helmet`.
+   - Política de Seguridad de Contenido (CSP) restrictiva que deshabilita scripts desconocidos y opcionalmente permite anuncios controlados.
+   - Desactivación de cabeceras reveladoras como `x-powered-by`.
+   - Limitación estricta del tamaño de payload JSON a un máximo de 10 KB.
+4. **Protección contra DoS (Denegación de Servicio):**
+   - Separación de rate limiters para análisis (10 req/min) y descargas (5 req/min, 20/hora).
+   - Cola de trabajos en memoria con concurrencia máxima global (3) y por IP (1) para evitar sobrecargas de CPU por descargas simultáneas.
+   - Temporizadores de timeout de 90 segundos por proceso.
+5. **Manejo Seguro de Archivos Temporales:**
+   - Cada descarga se realiza en una subcarpeta temporal aislada nombrada con UUID.
+   - Sanitización absoluta de los nombres de archivos finales.
+   - Eliminación forzada del archivo temporal al completarse la transferencia, en caso de error, al cancelarse la petición por el cliente, al exceder el timeout o cada 5 minutos por la tarea de purga en segundo plano.
 
-- Node.js (v18 o superior)
-- Python 3 y `pip`
-- FFmpeg
-- `yt-dlp` (se puede instalar con `pip install -U yt-dlp`)
+---
 
-## 📦 Instalación y Uso (Local)
+## ⚙️ Variables de Entorno (.env)
 
-1. Clona este repositorio y navega al directorio del proyecto:
-   ```bash
-   git clone <URL_DEL_REPOSITORIO>
-   cd FastTok
-   ```
+Configura las siguientes variables en tu entorno de producción o archivo `.env`:
 
-2. Instala las dependencias de Node.js:
+*   `NODE_ENV`: Entorno (`development`, `production`, `test`).
+*   `PORT`: Puerto del servidor (predeterminado `3000`).
+*   `PUBLIC_URL`: URL pública de la aplicación.
+*   `ALLOWED_ORIGINS`: Dominios permitidos por CORS separados por comas.
+*   `ADS_ENABLED`: `true` para activar espacios publicitarios no invasivos, `false` para desactivar por completo.
+*   `MAX_GLOBAL_CONCURRENT_DOWNLOADS`: Descargas simultáneas globales (predeterminado `3`).
+*   `MAX_CONCURRENT_DOWNLOADS_PER_IP`: Descargas simultáneas por cliente (predeterminado `1`).
+*   `DOWNLOAD_TIMEOUT_MS`: Tiempo de espera máximo por descarga (predeterminado `90000`).
+
+*(Consulta el archivo [.env.example](file:///.env.example) para ver la lista completa).*
+
+---
+
+## 🚀 Requisitos e Instalación
+
+### Ejecución Local
+
+1. Asegúrate de tener instalado **Node.js 20+**, **Python 3**, **FFmpeg** y **yt-dlp** en tu sistema.
+2. Instala las dependencias del proyecto:
    ```bash
    npm install
    ```
-
-3. Inicia el servidor:
+3. Copia el archivo `.env.example` a `.env` y configura tus variables locales.
+4. Inicia el servidor de desarrollo:
    ```bash
-   node server.js
+   npm start
    ```
 
-4. Abre tu navegador y accede a `http://localhost:3000`.
+### Ejecución con Docker (Recomendado)
 
-## 🐳 Uso con Docker (Recomendado)
+El proyecto incluye un `Dockerfile` seguro que corre bajo un usuario no root (`node`):
 
-El proyecto incluye un `Dockerfile` que configura automáticamente todo el entorno (Node.js, Python, FFmpeg y yt-dlp).
-
-1. Construye la imagen de Docker:
+1. Construye la imagen Docker:
    ```bash
-   docker build -t fasttok-downloader .
+   docker build -t fasttok-prod .
+   ```
+2. Ejecuta el contenedor exponiendo el puerto:
+   ```bash
+   docker run -p 3000:3000 --env-file .env fasttok-prod
    ```
 
-2. Ejecuta el contenedor:
-   ```bash
-   docker run -p 3000:3000 fasttok-downloader
-   ```
+---
 
-3. Accede a `http://localhost:3000`.
+## 🧪 Pruebas Automatizadas
 
-## 📝 Estructura del Proyecto
+La aplicación cuenta con una suite completa de pruebas unitarias e integración usando **Vitest** y **Supertest** que no realizan peticiones reales a TikTok (mockeadas para seguridad y velocidad).
 
-- `server.js`: Servidor Express que maneja la ruta de descarga usando `execFile` por seguridad.
-- `index.html`: Interfaz de usuario principal.
-- `public/`: Archivos estáticos como el manifest de PWA, íconos y Service Worker (`sw.js`).
-- `Dockerfile`: Instrucciones para construir el contenedor.
+Ejecuta las pruebas:
+```bash
+npm test
+```
 
-## 🛡️ Seguridad y Consideraciones
+Ejecuta el reporte de cobertura:
+```bash
+npm run coverage
+```
 
-- El servidor utiliza `execFile` en lugar de `exec` para invocar `yt-dlp`, previniendo inyección de comandos en la URL.
-- Los videos descargados se eliminan automáticamente del servidor una vez que se envían al cliente.
+---
 
-## 👨‍💻 Autor
+## 🛠️ Mantenimiento y Actualizaciones
 
-Creado por **[Jhero Studio]** © 2026.
+### Cómo actualizar `yt-dlp` y `FFmpeg` de forma segura
+Para evitar bloqueos por cambios en los reproductores de TikTok, es vital mantener actualizada la herramienta `yt-dlp`:
+
+*   **En Docker:** Reconstruye tu contenedor periódicamente ejecutando `docker build --no-cache ...`. El build descarga automáticamente la última versión de `yt-dlp` desde pip.
+*   **Localmente:** Ejecuta `pip install -U yt-dlp` periódicamente en tu sistema servidor.
+
+---
+
+## ⚖️ Aviso de Exención de Responsabilidad
+
+FastTok es un software independiente desarrollado con fines educativos y de respaldo personal de contenido. No está afiliado, asociado, patrocinado, respaldado ni conectado de ninguna manera oficial con TikTok, ByteDance ni ninguna de sus subsidiarias o afiliadas. Los usuarios son responsables de garantizar que sus descargas cumplen con los términos de servicio de la plataforma de origen y las leyes de propiedad intelectual de sus respectivos países.
