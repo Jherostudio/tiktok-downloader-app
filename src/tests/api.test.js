@@ -1,4 +1,16 @@
-const request = require("supertest");
+vi.mock("../services/metadata.service", () => ({
+    fetchVideoMetadata: vi.fn().mockResolvedValue({
+        id: "v123",
+        title: "Video Test",
+        creator: "Test User",
+        thumbnail: "https://www.tiktok.com/logo.png",
+        duration: 15,
+        formats: [
+            { id: "mp3", type: "audio", container: "mp3", quality: "Audio (320kbps)" },
+            { id: "original", type: "video", container: "mp4", quality: "Calidad Original" }
+        ]
+    })
+}));
 
 // Mock de child_process para simular yt-dlp y ffmpeg
 vi.mock("child_process", () => ({
@@ -33,21 +45,7 @@ vi.mock("dns", () => ({
     }
 }));
 
-// Mock del servicio de metadatos para simular llamadas a yt-dlp
-vi.mock("../services/metadata.service", () => ({
-    fetchVideoMetadata: vi.fn().mockResolvedValue({
-        id: "v123",
-        title: "Video Test",
-        creator: "Test User",
-        thumbnail: "https://www.tiktok.com/logo.png",
-        duration: 15,
-        formats: [
-            { id: "mp3", type: "audio", container: "mp3", quality: "Audio (320kbps)" },
-            { id: "original", type: "video", container: "mp4", quality: "Calidad Original" }
-        ]
-    })
-}));
-
+const request = require("supertest");
 const app = require("../app");
 
 describe("Rutas de la API e Integración", () => {
