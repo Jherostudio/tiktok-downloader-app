@@ -67,8 +67,8 @@ src/
 Configura las siguientes variables en tu entorno de producción o archivo `.env`:
 
 *   `NODE_ENV`: Entorno (`development`, `production`, `test`).
-*   `PORT`: Puerto del servidor (predeterminado `3000`).
-*   `PUBLIC_URL`: URL pública de la aplicación.
+*   `PORT`: Puerto del servidor (predeterminado `8080` en el `.env`).
+*   `PUBLIC_URL`: URL pública de la aplicación (predeterminado `http://localhost:8080`).
 *   `ALLOWED_ORIGINS`: Dominios permitidos por CORS separados por comas.
 *   `ADS_ENABLED`: `true` para activar espacios publicitarios no invasivos, `false` para desactivar por completo.
 *   `MAX_GLOBAL_CONCURRENT_DOWNLOADS`: Descargas simultáneas globales (predeterminado `3`).
@@ -91,6 +91,8 @@ Configura las siguientes variables en tu entorno de producción o archivo `.env`
 3. Copia el archivo `.env.example` a `.env` y configura tus variables locales.
 4. Inicia el servidor de desarrollo:
    ```bash
+   npm run dev
+   # o
    npm start
    ```
 
@@ -104,7 +106,7 @@ El proyecto incluye un `Dockerfile` seguro que corre bajo un usuario no root (`n
    ```
 2. Ejecuta el contenedor exponiendo el puerto:
    ```bash
-   docker run -p 3000:3000 --env-file .env fasttok-prod
+   docker run -p 8080:8080 --env-file .env fasttok-prod
    ```
 
 ---
@@ -112,6 +114,8 @@ El proyecto incluye un `Dockerfile` seguro que corre bajo un usuario no root (`n
 ## 🧪 Pruebas Automatizadas
 
 La aplicación cuenta con una suite completa de pruebas unitarias e integración usando **Vitest** y **Supertest** que no realizan peticiones reales a TikTok (mockeadas para seguridad y velocidad).
+
+Las pruebas están configuradas mediante [vitest.config.js](file:///Volumes/CORSAIR/MY%20FILES/ING%20SOFTWARE/Cybersecurity/TikTok%20Downloader/vitest.config.js) para habilitar variables globales (`describe`, `it`, `expect`, `vi`, `beforeEach`) y excluir automáticamente archivos ocultos y temporales de macOS (`**/._*`).
 
 Ejecuta las pruebas:
 ```bash
