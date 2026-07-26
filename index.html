@@ -9,303 +9,2005 @@
 
     <!-- PWA Configuración (Ícono e Instalación) -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#090d16">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.svg">
 
-    <title>FastTok Downloader</title>
+    <title>FastTok Downloader | Descargador Seguro de TikTok</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --bg-color: #090d16;
+            --card-bg: rgba(15, 23, 42, 0.45);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --primary: #00f2fe;
+            --secondary: #ff0050;
+            --accent: #ff007f;
+            --pro-gold: #f59e0b;
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-border: rgba(255, 255, 255, 0.1);
+        }
+
+        :root.light-theme {
+            --bg-color: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --border-color: rgba(15, 23, 42, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --primary: #0284c7;
+            --secondary: #db2777;
+            --accent: #be185d;
+            --input-bg: rgba(255, 255, 255, 0.95);
+            --input-border: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Arial;
-            background: #0f172a;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            text-align: center;
-            width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        input {
-            padding: 14px;
-            width: 100%;
-            max-width: 320px;
-            border-radius: 8px;
-            border: none;
-            box-sizing: border-box;
-            font-size: 16px;
-            /* Evita que los iPhones hagan zoom al tocar el input */
-        }
-
-        /* Envoltorio para alinear botones en móviles y PC */
-        .buttons-row {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            /* Móvil: Uno debajo del otro */
             align-items: center;
-            gap: 12px;
-            margin-top: 15px;
+            padding: 100px 20px 60px 20px;
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        @media (min-width: 450px) {
-            .buttons-row {
-                flex-direction: row;
-                /* PC: Uno al lado del otro */
-                justify-content: center;
-                gap: 15px;
-            }
+        /* Orbes de luz decorativos de fondo (Cyber-Aesthetic) */
+        .glow-orb {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+            animation: orbPulse 12s infinite alternate ease-in-out;
         }
 
-        button {
-            padding: 14px 20px;
-            border: none;
-            border-radius: 8px;
-            background: #22c55e;
-            /* Verde original */
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 15px;
-            width: 100%;
-            max-width: 320px;
-            box-sizing: border-box;
+        .orb-1 {
+            top: 5%;
+            left: 5%;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
         }
 
-        button:hover {
-            background: #16a34a;
+        .orb-2 {
+            bottom: 5%;
+            right: 5%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            animation-delay: -6s;
         }
 
-        /* Estilos para el botón PRO */
-        .btn-pro {
-            background: #f59e0b;
-            /* Naranja/Dorado */
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
-            animation: pulse 2s infinite;
-        }
-
-        .btn-pro:hover {
-            background: #d97706;
-        }
-
-        @keyframes pulse {
+        @keyframes orbPulse {
             0% {
-                transform: scale(1);
+                transform: scale(1) translate(0, 0);
+                opacity: 0.12;
             }
-
-            50% {
-                transform: scale(1.05);
-            }
-
             100% {
-                transform: scale(1);
+                transform: scale(1.3) translate(40px, -20px);
+                opacity: 0.22;
             }
         }
 
-        /* Estilo para los espacios de anuncios (Google Ads) */
-        .ad-space {
-            margin: 20px auto;
-            width: 320px;
-            height: 50px;
-            background: #1e293b;
-            border: 1px dashed #475569;
+        /* Tarjeta principal con efecto de vidrio */
+        .card {
+            width: 100%;
+            max-width: 540px;
+            background: var(--card-bg);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 36px 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            z-index: 10;
+            position: relative;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 28px 20px;
+                border-radius: 24px;
+            }
+        }
+
+        /* Encabezado */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15) 0%, rgba(255, 0, 80, 0.15) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-icon {
+            font-size: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #94a3b8;
-            font-size: 12px;
-            border-radius: 4px;
         }
 
-        .loader {
-            margin-top: 10px;
+        .title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, var(--primary) 0%, #4facfe 30%, var(--accent) 70%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.1));
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 0;
+            line-height: 1.5;
+            max-width: 320px;
+        }
+
+        /* Contenedor de publicidad con estilo integrado (No invasivo) */
+        .ad-banner-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 24px;
+            min-height: 50px;
+            display: none; /* Se activa dinámicamente si ADS_ENABLED=true */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-placeholder-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Barra de entrada de enlace */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 18px;
+            padding: 6px 6px 6px 16px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-icon {
+            color: var(--text-muted);
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-field {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            padding: 12px 0;
+            width: 100%;
+        }
+
+        .input-field::placeholder {
+            color: #475569;
+        }
+
+        .clear-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 8px;
             display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 6px;
+            transition: color 0.2s;
         }
 
-        /* Overlay para el Anuncio (Modal) */
-        .ad-overlay {
+        .clear-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .paste-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            border-radius: 12px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .paste-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+        }
+
+        /* Botón de análisis */
+        .analyze-btn {
+            width: 100%;
+            margin-top: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, #00c6fe 100%);
+            border: none;
+            color: #090d16;
+            border-radius: 18px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.4);
+            background: linear-gradient(135deg, var(--primary) 0%, #00b3fe 100%);
+        }
+
+        .analyze-btn:active {
+            transform: translateY(0);
+        }
+
+        .analyze-btn:disabled {
+            background: #1e293b;
+            color: #475569;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Tarjeta de vista previa de metadatos */
+        .preview-card {
+            margin-top: 24px;
+            background: rgba(30, 41, 59, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .preview-main {
+            display: flex;
+            gap: 18px;
+        }
+
+        @media (max-width: 480px) {
+            .preview-main {
+                flex-direction: column;
+            }
+        }
+
+        .preview-thumb-wrapper {
+            position: relative;
+            width: 110px;
+            height: 150px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            flex-shrink: 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .preview-thumb-wrapper {
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        .preview-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(9, 13, 22, 0.75);
+            backdrop-filter: blur(4px);
+            color: #fff;
+            padding: 2px 6px;
+            font-size: 11px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .preview-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .preview-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .preview-uploader {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 13.5px;
+        }
+
+        .uploader-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .preview-stats {
+            margin-top: 4px;
+            color: var(--text-muted);
+            font-size: 12.5px;
+        }
+
+        .preview-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .dl-btn {
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .dl-btn-standard {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        }
+
+        .dl-btn-standard:hover {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .dl-btn-audio {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+        }
+
+        .dl-btn-audio:hover {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .dl-btn-hd {
+            background: linear-gradient(135deg, var(--pro-gold) 0%, #d97706 100%);
+            color: #090d16;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.25);
+        }
+
+        .dl-btn-hd:hover {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            transform: scale(1.01) translateY(-1px);
+        }
+
+        /* Botón legítimo de soporte en lugar del PRO falso */
+        .support-creator-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .support-creator-card p {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+        }
+
+        .support-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .support-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--text-primary);
+        }
+
+        /* Contenedor de estado de descarga (Pasos honestos) */
+        .status-container {
+            margin-top: 24px;
+            display: none;
+            background: rgba(30, 41, 59, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 20px;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13.5px;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .step-item.active {
+            color: var(--text-primary);
+        }
+
+        .step-item.completed {
+            color: #10b981;
+        }
+
+        .step-bubble {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #475569;
+            transition: all 0.3s;
+        }
+
+        .step-item.active .step-bubble {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+        }
+
+        .step-item.completed .step-bubble {
+            border-color: #10b981;
+            background: #10b981;
+            color: #090d16;
+        }
+
+        .cancel-btn {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            color: #f43f5e;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(244, 63, 94, 0.25);
+        }
+
+        /* Créditos y Aviso Legal */
+        .footer {
+            margin-top: 40px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            text-align: center;
+            letter-spacing: 0.5px;
+            z-index: 10;
+        }
+
+        .footer-brand {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .legal-footer {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .legal-footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .legal-footer a:hover {
+            color: var(--text-secondary);
+        }
+
+        .disclaimer-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 24px;
+            line-height: 1.5;
+            max-width: 440px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Toasts de Notificación */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10000;
+            pointer-events: none;
+            max-width: 350px;
+            width: calc(100% - 48px);
+        }
+
+        @media (max-width: 480px) {
+            .toast-container {
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+                max-width: 100%;
+                width: auto;
+            }
+        }
+
+        .toast {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 14px 18px;
+            color: var(--text-primary);
+            font-size: 13.5px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            pointer-events: auto;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes toastIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.fade-out {
+            transform: translateY(15px) scale(0.95);
+            opacity: 0;
+        }
+
+        .toast-success { border-left: 4px solid #10b981; }
+        .toast-error { border-left: 4px solid #f43f5e; }
+        .toast-info { border-left: 4px solid var(--primary); }
+
+        .toast-icon {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .toast-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 4px;
+            margin-left: auto;
+            line-height: 1;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toast-close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        /* Banner de instalación PWA */
+        .pwa-banner {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            max-width: 320px;
+            animation: toastIn 0.3s ease forwards;
+        }
+
+        @media (max-width: 768px) {
+            .pwa-banner {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+                max-width: none;
+            }
+        }
+
+        .pwa-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pwa-icon {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .pwa-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .pwa-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .pwa-subtitle {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .pwa-btn {
+            background: var(--primary);
+            border: none;
+            color: #090d16;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .pwa-btn:hover {
+            background: #00d2fe;
+        }
+
+        /* ==================== NUEVOS ESTILOS PROFESIONALES ==================== */
+
+        /* Navbar */
+        .navbar {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.98);
-            display: none;
-            /* Oculto por defecto */
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+            width: 100%;
+            height: 70px;
+            background: rgba(9, 13, 22, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
             z-index: 1000;
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
-        .ad-overlay h2 {
-            color: #f8fafc;
-            margin-bottom: 10px;
+        :root.light-theme .navbar {
+            background: rgba(248, 250, 252, 0.8);
         }
 
-        .countdown-text {
-            color: #cbd5e1;
-            font-size: 18px;
-            margin-bottom: 20px;
+        .navbar-container {
+            width: 100%;
+            max-width: 1100px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .btn-skip {
-            background: #3b82f6;
-            /* Azul */
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-brand .nav-logo-icon {
+            font-size: 22px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-btn-kofi {
+            background: var(--pro-gold);
+            color: #090d16;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-btn-kofi:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+        }
+
+        /* Toggle Button */
+        .theme-toggle-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        :root.light-theme .theme-toggle-btn {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .theme-toggle-btn .theme-icon-sun {
             display: none;
-            /* Oculto hasta que llegue a 0 */
         }
 
-        .btn-skip:hover {
-            background: #2563eb;
+        :root.light-theme .theme-toggle-btn .theme-icon-sun {
+            display: block;
+        }
+
+        :root.light-theme .theme-toggle-btn .theme-icon-moon {
+            display: none;
+        }
+
+        /* Mobile Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            z-index: 1100;
+        }
+
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        /* Contenedor principal de secciones */
+        .main-content {
+            width: 100%;
+            max-width: 1100px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 100px;
+            margin-top: 40px;
+        }
+
+        .section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            scroll-margin-top: 90px;
+        }
+
+        .section-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            font-size: 14.5px;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 500px;
+            line-height: 1.5;
+            margin-bottom: 44px;
+        }
+
+        /* Grid de Plataformas Soportadas */
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .platform-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 30px -5px rgba(0, 242, 254, 0.15);
+        }
+
+        /* Temas de plataformas en la tarjeta */
+        .card.theme-youtube {
+            --primary: #ff0000;
+            --secondary: #990000;
+        }
+        .card.theme-instagram {
+            --primary: #e1306c;
+            --secondary: #c13584;
+        }
+        .card.theme-facebook {
+            --primary: #1877f2;
+            --secondary: #1154c1;
+        }
+        .card.theme-twitter {
+            --primary: #1d9bf0;
+            --secondary: #157ec1;
+        }
+        .card.theme-twitch {
+            --primary: #9146ff;
+            --secondary: #6441a5;
+        }
+        .card.theme-soundcloud {
+            --primary: #ff5500;
+            --secondary: #cc4400;
+        }
+        .card.theme-pinterest {
+            --primary: #bd081c;
+            --secondary: #8d0615;
+        }
+
+        .platform-icon {
+            font-size: 28px;
+            width: 54px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        :root.light-theme .platform-icon {
+            background: rgba(0, 0, 0, 0.02);
+            border-color: rgba(0, 0, 0, 0.04);
+        }
+
+        .platform-card:hover .platform-icon {
+            background: rgba(0, 242, 254, 0.08);
+            transform: scale(1.1);
+        }
+
+        .platform-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Tarjetas de Instrucciones */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            width: 100%;
+            max-width: 950px;
+        }
+
+        .step-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 36px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .step-number {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #090d16;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 800;
+            box-shadow: 0 6px 16px rgba(0, 242, 254, 0.25);
+        }
+
+        .step-card-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .step-card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Tarjetas de Características */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 950px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 12px 30px -5px rgba(255, 0, 80, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon-wrapper {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: rgba(255, 0, 80, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary);
+        }
+
+        :root.light-theme .feature-icon-wrapper {
+            background: rgba(219, 39, 119, 0.08);
+        }
+
+        .feature-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Mobile Hamburger & Responsive Menu adjustments */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                width: 260px;
+                height: calc(100vh - 70px);
+                background: rgba(9, 13, 22, 0.96);
+                backdrop-filter: blur(20px);
+                border-left: 1px solid var(--border-color);
+                flex-direction: column;
+                padding: 40px 24px;
+                align-items: flex-start;
+                gap: 28px;
+                transition: right 0.3s ease;
+                z-index: 999;
+            }
+
+            :root.light-theme .nav-menu {
+                background: rgba(248, 250, 252, 0.98);
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            /* Hamburger animation */
+            .hamburger.active span:nth-child(1) {
+                transform: translateY(7px) rotate(45deg);
+            }
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+            .hamburger.active span:nth-child(3) {
+                transform: translateY(-7px) rotate(-45deg);
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- Menú de Navegación -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="nav-brand">
+                <span class="nav-logo-icon">⚡</span>
+                <span class="nav-logo-text">FastTok</span>
+            </a>
+            <nav class="nav-menu" id="navMenu">
+                <a href="#downloader" class="nav-link" onclick="toggleMenu(false)">Inicio</a>
+                <a href="#platforms" class="nav-link" onclick="toggleMenu(false)">Plataformas</a>
+                <a href="#instructions" class="nav-link" onclick="toggleMenu(false)">Instrucciones</a>
+                <a href="#features" class="nav-link" onclick="toggleMenu(false)">Beneficios</a>
+                <a href="https://ko-fi.com/jherostudio" target="_blank" rel="noopener noreferrer" class="nav-btn-kofi">
+                    <span>☕ Apoyar</span>
+                </a>
+                <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Alternar Tema">
+                    <span class="theme-icon-sun">☀️</span>
+                    <span class="theme-icon-moon">🌙</span>
+                </button>
+            </nav>
+            <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()" aria-label="Menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
 
-    <div class="container">
-        <h1>⚡ FastTok</h1>
-        <p>Descarga videos sin marca de agua</p>
+    <!-- Ambient Lights -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
 
-        <!-- Espacio superior para Native Banner de Adsterra -->
-        <div style="margin: 20px auto; width: 100%; text-align: center; min-height: 50px;">
-            <script async="async" data-cfasync="false"
-                src="//pl29080784.profitablecpmratenetwork.com/0a2bd0d2ec688b9ec73b9a4005be3e40/invoke.js"></script>
-            <div id="container-0a2bd0d2ec688b9ec73b9a4005be3e40"></div>
+    <main class="main-content">
+        <!-- Downloader Section -->
+        <section id="downloader" class="section">
+            <div class="card">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-container">
+                <span class="logo-icon" id="downloaderLogoIcon">⚡</span>
+            </div>
+            <h1 class="title" id="downloaderTitle">FastTok</h1>
+            <p class="subtitle" id="downloaderSubtitle">Descarga videos y audio de TikTok de manera independiente y segura.</p>
         </div>
 
-        <input id="url" placeholder="Pega link aquí">
-
-        <div class="buttons-row">
-            <!-- Botón gratis normal -->
-            <button onclick="download()">Descargar Normal</button>
-
-            <!-- Botón para monetizar (Checkout, Suscripción o Afiliado) -->
-            <button class="btn-pro" onclick="downloadPro()">⭐ Download HD PRO</button>
+        <!-- Contenedor de publicidad (Integración Controlada) -->
+        <div class="ad-banner-container" id="adBannerContainer">
+            <!-- Cargado dinámicamente vía JS basado en la configuración del servidor -->
         </div>
 
-        <div class="loader" id="loader">⏳ Descargando...</div>
+        <!-- Input Bar -->
+        <div class="input-wrapper">
+            <span class="input-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </span>
+            <input id="url" class="input-field" placeholder="Pega el enlace de TikTok aquí..." oninput="checkInput()">
+            <button class="clear-btn" id="clearBtn" onclick="clearInput()">✕</button>
+            <button class="paste-btn" onclick="pasteLink()">Pegar Enlace</button>
+        </div>
 
-        <!-- Espacio inferior (oculto por ahora, puedes agregar otro banner aquí en el futuro) -->
+        <button class="analyze-btn" id="analyzeBtn" onclick="analyzeLink()">
+            <span>Analizar Enlace</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        </button>
 
-        <!-- Footer / Créditos -->
-        <div style="margin-top: 50px; font-size: 13px; color: #64748b; letter-spacing: 0.5px;">
-            Created by <strong style="color: #94a3b8;">Jhero Studio</strong> &copy; 2026
+        <!-- Loading Steps Container -->
+        <div class="status-container" id="statusContainer">
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="step-list">
+                <div class="step-item" id="step1">
+                    <span class="step-bubble">1</span>
+                    <span id="step1Text">Validando enlace y resolviendo DNS...</span>
+                </div>
+                <div class="step-item" id="step2">
+                    <span class="step-bubble">2</span>
+                    <span id="step2Text">Descargando y procesando archivo...</span>
+                </div>
+                <div class="step-item" id="step3">
+                    <span class="step-bubble">3</span>
+                    <span id="step3Text">Preparando archivo para transferencia...</span>
+                </div>
+            </div>
+            <button class="cancel-btn" id="cancelBtn" onclick="cancelActiveDownload()">Cancelar Descarga</button>
+        </div>
+
+        <!-- Video Preview Card -->
+        <div class="preview-card" id="previewCard">
+            <div class="preview-main">
+                <div class="preview-thumb-wrapper">
+                    <img id="previewThumb" class="preview-thumb" src="/icon.svg" alt="Miniatura">
+                    <span id="previewDuration" class="preview-duration">0:00</span>
+                </div>
+                <div class="preview-info">
+                    <h3 id="previewTitle" class="preview-title">Título del video</h3>
+                    <div class="preview-uploader">
+                        <div class="uploader-avatar" id="uploaderAvatar">C</div>
+                        <span id="previewAuthor">@usuario</span>
+                    </div>
+                    <div class="preview-stats" id="previewStats">
+                        <!-- Detalles informativos -->
+                    </div>
+                </div>
+            </div>
+            <div class="preview-actions" id="previewActions">
+                <!-- Se inyectan dinámicamente los botones basados en las calidades reales -->
+            </div>
+            <div class="support-creator-card">
+                <p>¿Te gusta FastTok? Apoya al proyecto para mantener los servidores activos libres de publicidad invasiva.</p>
+                <a href="https://ko-fi.com/jherostudio" target="_blank" rel="noopener noreferrer" class="support-btn">☕ Apoyar en Ko-fi</a>
+            </div>
         </div>
     </div>
+        </section>
 
-    <!-- Modal o Overlay de Anuncio -->
-    <div class="ad-overlay" id="adOverlay">
-        <h2>🔥 Desbloqueando HD PRO...</h2>
-        <div class="countdown-text">Tu descarga estará lista en <span id="countdown">10</span> segundos</div>
+        <!-- Sección de Plataformas Soportadas -->
+        <section id="platforms" class="section">
+            <h2 class="section-title">Plataformas Soportadas</h2>
+            <p class="section-subtitle">Ahora puedes descargar contenido multimedia de tus redes sociales favoritas sin límites ni restricciones.</p>
+            <div class="platforms-grid">
+                <div class="platform-card" onclick="selectPlatform('tiktok')">
+                    <span class="platform-icon">📱</span>
+                    <span class="platform-name">TikTok</span>
+                </div>
+                <div class="platform-card" onclick="selectPlatform('youtube')">
+                    <span class="platform-icon">🎥</span>
+                    <span class="platform-name">YouTube</span>
+                </div>
+                <div class="platform-card" onclick="selectPlatform('instagram')">
+                    <span class="platform-icon">📸</span>
+                    <span class="platform-name">Instagram</span>
+                </div>
+                <div class="platform-card" onclick="selectPlatform('facebook')">
+                    <span class="platform-icon">👥</span>
+                    <span class="platform-name">Facebook</span>
+                </div>
+                <div class="platform-card" onclick="selectPlatform('twitter')">
+                    <span class="platform-icon">🐦</span>
+                    <span class="platform-name">Twitter / X</span>
+                </div>
+                <div class="platform-card" onclick="selectPlatform('twitch')">
+                    <span class="platform-icon">🎮</span>
+                    <span class="platform-name">Twitch</span>
+                </div>
+                <div class="platform-card" onclick="selectPlatform('soundcloud')">
+                    <span class="platform-icon">🎵</span>
+                    <span class="platform-name">SoundCloud</span>
+                </div>
+                <div class="platform-card" onclick="selectPlatform('pinterest')">
+                    <span class="platform-icon">📌</span>
+                    <span class="platform-name">Pinterest</span>
+                </div>
+            </div>
+        </section>
 
-        <!-- Recuadro para futuro anuncio o Direct Link de Adsterra -->
-        <!-- En el futuro puedes crear un 'Direct Link' en Adsterra y ponerlo aquí -->
+        <!-- Sección Paso a Paso (Instrucciones) -->
+        <section id="instructions" class="section">
+            <h2 class="section-title">¿Cómo descargar videos?</h2>
+            <p class="section-subtitle">Sigue estos tres sencillos pasos para bajar cualquier archivo multimedia en cuestión de segundos.</p>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="step-card-title">Copiar Enlace</h3>
+                    <p class="step-card-desc">Copia el enlace del video o audio de la plataforma (por ejemplo, TikTok o YouTube) que deseas descargar.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="step-card-title">Pegar en la Barra</h3>
+                    <p class="step-card-desc">Pega el enlace en la barra de búsqueda de arriba y haz clic en el botón de "Analizar Enlace" para que el sistema lo procese.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 class="step-card-title">Elegir Formato y Bajar</h3>
+                    <p class="step-card-desc">Elige entre las calidades disponibles de video o audio MP3 y haz clic para iniciar la descarga directamente en tu dispositivo.</p>
+                </div>
+            </div>
+        </section>
 
-        <button class="btn-skip" id="btnSkip" onclick="startProDownload()">⬇️ Saltar Anuncio y Descargar</button>
+        <!-- Sección de Beneficios / Características -->
+        <section id="features" class="section">
+            <h2 class="section-title">¿Por qué elegir FastTok?</h2>
+            <p class="section-subtitle">Diseñado con un enfoque en la velocidad, simplicidad y total privacidad para el usuario.</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <h3 class="feature-title">Totalmente Gratis</h3>
+                    <p class="feature-desc">Descarga videos ilimitados sin pagos ocultos, sin suscripciones ni límites de descargas diarias.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <h3 class="feature-title">100% Seguro y Privado</h3>
+                    <p class="feature-desc">No almacenamos tus credenciales ni historial. El proceso de descarga se realiza de forma anónima y segura.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                    <h3 class="feature-title">Sin Registros</h3>
+                    <p class="feature-desc">Entra y descarga de inmediato. No necesitas crear una cuenta ni ingresar correos electrónicos para utilizar el servicio.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                    </div>
+                    <h3 class="feature-title">Conversión MP3</h3>
+                    <p class="feature-desc">Nuestra integración con FFmpeg permite extraer el audio en la máxima calidad (320kbps) en segundos.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PWA Install Banner -->
+    <div id="pwaBanner" class="pwa-banner">
+        <div class="pwa-info">
+            <span class="pwa-icon">⚡</span>
+            <div class="pwa-text">
+                <div class="pwa-title">Instalar FastTok</div>
+                <div class="pwa-subtitle">Acceso directo en tu pantalla de inicio</div>
+            </div>
+        </div>
+        <button class="pwa-btn" onclick="installPWA()">Instalar</button>
     </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Footer Legal -->
+    <div class="footer">
+        Desarrollado con ❤️ por <span class="footer-brand">Jhero Studio</span> &copy; 2026
+        <div class="legal-footer">
+            <a href="/terms.html">Términos de Uso</a> |
+            <a href="/privacy.html">Privacidad</a> |
+            <a href="/cookies.html">Cookies</a> |
+            <a href="/dmca.html">Derechos Autor (DMCA)</a>
+        </div>
+    </div>
+    
+    <p class="disclaimer-text">
+        FastTok es una herramienta independiente y no está afiliada, patrocinada ni respaldada por TikTok o ByteDance. Los usuarios son responsables de descargar únicamente contenido propio o con autorización legal.
+    </p>
 
     <script>
-        async function download() {
-            const url = document.getElementById("url").value;
-            const loader = document.getElementById("loader");
+        let activeVideoMetadata = null;
+        let activeJobId = null;
+        let activeEventSource = null;
 
+        // Cargar publicidad de manera controlada al iniciar
+        window.addEventListener("DOMContentLoaded", loadAdsIfEnabled);
+
+        async function loadAdsIfEnabled() {
+            try {
+                const res = await fetch("/health");
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                if (data.adsEnabled) {
+                    const adContainer = document.getElementById("adBannerContainer");
+                    if (adContainer) {
+                        adContainer.style.display = "flex";
+                        // Inyectar el banner nativo
+                        const script = document.createElement("script");
+                        script.async = true;
+                        script.setAttribute("data-cfasync", "false");
+                        script.src = "//pl29080784.profitablecpmratenetwork.com/0a2bd0d2ec688b9ec73b9a4005be3e40/invoke.js";
+                        adContainer.appendChild(script);
+                    }
+                    
+                    // Inyectar scripts auxiliares (Social Bar / Popunder controlados si el administrador los habilitó)
+                    const s1 = document.createElement("script");
+                    s1.type = "text/javascript";
+                    s1.src = "//pl29080783.profitablecpmratenetwork.com/7c/16/bd/7c16bd3096db3b3f54157345620814f4.js";
+                    document.body.appendChild(s1);
+
+                    const s2 = document.createElement("script");
+                    s2.type = "text/javascript";
+                    s2.src = "//pl29080782.profitablecpmratenetwork.com/50/26/2b/50262b6046fd6b5f2684e8b9f0840880.js";
+                    document.body.appendChild(s2);
+                }
+            } catch (e) {
+                console.error("Fallo al evaluar publicidad condicional:", e);
+            }
+        }
+
+        // Limpieza y manejo del campo de texto
+        function checkInput() {
+            const val = document.getElementById("url").value;
+            const clearBtn = document.getElementById("clearBtn");
+            clearBtn.style.display = val ? "flex" : "none";
+        }
+
+        function clearInput() {
+            document.getElementById("url").value = "";
+            checkInput();
+            document.getElementById("previewCard").style.display = "none";
+            document.getElementById("statusContainer").style.display = "none";
+            activeVideoMetadata = null;
+            activeJobId = null;
+            if (activeEventSource) {
+                activeEventSource.close();
+                activeEventSource = null;
+            }
+        }
+
+        // Toasts
+        function showToast(message, type = "info") {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = `toast toast-${type}`;
+
+            let icon = "ℹ️";
+            if (type === "success") icon = "✅";
+            if (type === "error") icon = "❌";
+
+            toast.innerHTML = `
+                <span class="toast-icon">${icon}</span>
+                <span style="flex-grow: 1;">${message}</span>
+                <button class="toast-close-btn" onclick="this.parentElement.remove()">✕</button>
+            `;
+
+            container.appendChild(toast);
+
+            // Cerrar automáticamente después de 3.5 segundos
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add("fade-out");
+                    toast.addEventListener("transitionend", () => {
+                        toast.remove();
+                    });
+                }
+            }, 3500);
+        }
+
+        // Pegar desde portapapeles
+        async function pasteLink() {
+            try {
+                const text = await navigator.clipboard.readText();
+                if (text) {
+                    document.getElementById("url").value = text;
+                    checkInput();
+                    showToast("¡Enlace pegado correctamente!", "success");
+                    analyzeLink();
+                } else {
+                    showToast("El portapapeles parece estar vacío.", "info");
+                }
+            } catch (err) {
+                showToast("Por favor, pega el enlace manualmente en el campo.", "info");
+            }
+        }
+
+        // Formatear duración (segundos a mm:ss)
+        function formatDuration(sec) {
+            if (!sec) return "0:00";
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60).toString().padStart(2, "0");
+            return `${m}:${s}`;
+        }
+
+        // Actualizar UI del loader
+        function updateStatus(step, text, progressVal) {
+            document.getElementById("statusContainer").style.display = "flex";
+            document.getElementById("progressFill").style.width = `${progressVal}%`;
+
+            const steps = ["step1", "step2", "step3"];
+            steps.forEach((sId, index) => {
+                const item = document.getElementById(sId);
+                const stepNum = index + 1;
+                
+                if (stepNum < step) {
+                    item.className = "step-item completed";
+                } else if (stepNum === step) {
+                    item.className = "step-item active";
+                    if (text) {
+                        document.getElementById(`${sId}Text`).textContent = text;
+                    }
+                } else {
+                    item.className = "step-item";
+                }
+            });
+        }
+
+        // Analizar Enlace
+        async function analyzeLink() {
+            const url = document.getElementById("url").value.trim();
             if (!url) {
-                alert("Pega un link primero");
+                showToast("Por favor, ingresa una URL primero.", "error");
                 return;
             }
 
-            loader.style.display = "block";
+            document.getElementById("previewCard").style.display = "none";
+            
+            updateStatus(1, "Validando enlace y resolviendo DNS...", 25);
+            document.getElementById("analyzeBtn").disabled = true;
 
             try {
-                const res = await fetch("/download", {
+                const res = await fetch("/api/analyze", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ url })
                 });
 
-                const blob = await res.blob();
-                const link = document.createElement("a");
+                let body;
+                const contentType = res.headers.get("content-type");
+                
+                if (contentType && contentType.includes("application/json")) {
+                    body = await res.json();
+                } else {
+                    throw new Error("El servidor devolvió una respuesta no válida o se encuentra fuera de línea.");
+                }
 
-                link.href = window.URL.createObjectURL(blob);
-                link.download = "video.mp4";
-                link.click();
+                if (!res.ok || !body.success) {
+                    throw new Error(body?.error?.message || "No se pudo analizar el enlace.");
+                }
+
+                const data = body.data;
+                activeVideoMetadata = data;
+
+                // Cargar vista previa
+                document.getElementById("previewThumb").src = data.thumbnail;
+                document.getElementById("previewDuration").textContent = formatDuration(data.duration);
+                document.getElementById("previewTitle").textContent = data.title || "Video de TikTok";
+                document.getElementById("previewAuthor").textContent = `@${data.creator || "Creador"}`;
+                
+                const initials = (data.creator || "C").substring(0, 2);
+                document.getElementById("uploaderAvatar").textContent = initials;
+                
+                document.getElementById("previewStats").textContent = `Duración: ${formatDuration(data.duration)}`;
+
+                // Inyectar botones para calidades reales
+                const actionsContainer = document.getElementById("previewActions");
+                actionsContainer.innerHTML = "";
+
+                data.formats.forEach(f => {
+                    const btn = document.createElement("button");
+                    
+                    if (f.id === "mp3") {
+                        btn.className = "dl-btn dl-btn-audio";
+                        btn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                            <span>Descargar Audio MP3</span>
+                        `;
+                    } else if (f.id === "1080p" || f.id === "720p") {
+                        btn.className = "dl-btn dl-btn-hd";
+                        btn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                            <span>Descargar Video ${f.quality}</span>
+                        `;
+                    } else {
+                        btn.className = "dl-btn dl-btn-standard";
+                        btn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>
+                            <span>Descargar Video (${f.quality})</span>
+                        `;
+                    }
+
+                    btn.onclick = () => startDownload(f.token, f.id);
+                    actionsContainer.appendChild(btn);
+                });
+
+                document.getElementById("statusContainer").style.display = "none";
+                document.getElementById("previewCard").style.display = "flex";
+                showToast("¡Enlace analizado correctamente!", "success");
 
             } catch (err) {
-                alert("Error descargando");
+                console.error(err);
+                document.getElementById("statusContainer").style.display = "none";
+                showToast(err.message || "No pudimos procesar este enlace. Revisa que sea público.", "error");
+            } finally {
+                document.getElementById("analyzeBtn").disabled = false;
             }
-
-            loader.style.display = "none";
         }
 
-        // Función para el botón PRO (con Publicidad)
-        function downloadPro() {
-            const url = document.getElementById("url").value;
-            if (!url) {
-                alert("Pega un link primero");
-                return;
-            }
+        // Iniciar Descarga (Fase 2 de Dos Pasos)
+        async function startDownload(token, format) {
+            updateStatus(1, "Solicitando descarga al servidor...", 15);
+            
+            document.getElementById("previewCard").style.display = "none";
+            document.getElementById("analyzeBtn").disabled = true;
 
-            // Mostrar la ventana del anuncio
-            const overlay = document.getElementById("adOverlay");
-            const btnSkip = document.getElementById("btnSkip");
-            const countdownSpan = document.getElementById("countdown");
+            try {
+                const res = await fetch("/api/download", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token, format })
+                });
 
-            overlay.style.display = "flex";
-            btnSkip.style.display = "none";
-
-            let timeLeft = 10; // Segundos obligatorios de anuncio
-            countdownSpan.textContent = timeLeft;
-
-            const timer = setInterval(() => {
-                timeLeft--;
-                countdownSpan.textContent = timeLeft;
-
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    countdownSpan.innerHTML = "¡Listo!";
-                    btnSkip.style.display = "block"; // Habilitar el botón de descarga real
+                let body;
+                const contentType = res.headers.get("content-type");
+                
+                if (contentType && contentType.includes("application/json")) {
+                    body = await res.json();
+                } else {
+                    throw new Error("El servidor devolvió una respuesta no válida o se encuentra fuera de línea.");
                 }
-            }, 1000);
+
+                if (!res.ok || !body.success) {
+                    throw new Error(body?.error?.message || "Límite de cola superado o error de servidor.");
+                }
+
+                const jobId = body.jobId;
+                activeJobId = jobId;
+
+                // Conectar al flujo SSE
+                updateStatus(2, "Conectando al despachador de colas...", 25);
+                
+                activeEventSource = new EventSource(`/api/progress/${jobId}`);
+                
+                activeEventSource.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.status === "queued") {
+                        updateStatus(2, "En cola. Esperando liberación de recursos...", 30);
+                    } else if (data.status === "processing") {
+                        const pctStr = typeof data.progress === 'number' ? data.progress.toFixed(1) : data.progress;
+                        const barProgress = 35 + (data.progress * 0.55); // escala a la barra
+                        updateStatus(2, `Descargando y procesando archivo... (${pctStr}%)`, barProgress);
+                    } else if (data.status === "completed") {
+                        activeEventSource.close();
+                        activeEventSource = null;
+                        
+                        updateStatus(3, "¡Listo! Iniciando descarga en tu dispositivo...", 95);
+                        
+                        // Redirigir a descargar el archivo final de forma segura
+                        const downloadLink = document.createElement("a");
+                        downloadLink.href = `/api/file/${jobId}`;
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                        
+                        showToast("¡Tu descarga ha comenzado!", "success");
+                        updateStatus(3, "¡Completado!", 100);
+                        
+                        setTimeout(() => {
+                            document.getElementById("statusContainer").style.display = "none";
+                            document.getElementById("previewCard").style.display = "flex";
+                            document.getElementById("analyzeBtn").disabled = false;
+                            activeJobId = null;
+                        }, 2000);
+                    } else if (data.status === "error") {
+                        activeEventSource.close();
+                        activeEventSource = null;
+                        showToast(data.error || "Ocurrió un error al descargar.", "error");
+                        resetUiState();
+                    }
+                };
+
+                activeEventSource.onerror = (e) => {
+                    if (activeEventSource) {
+                        activeEventSource.close();
+                        activeEventSource = null;
+                        showToast("Conexión interrumpida con el servidor de progreso.", "error");
+                        resetUiState();
+                    }
+                };
+
+            } catch (err) {
+                console.error(err);
+                showToast(err.message || "No se pudo iniciar la descarga.", "error");
+                resetUiState();
+            }
         }
 
-        // Se ejecuta cuando pasan los 10 segundos y el usuario da click a saltar
-        function startProDownload() {
-            document.getElementById("adOverlay").style.display = "none";
+        // Cancelar descarga activa
+        async function cancelActiveDownload() {
+            if (!activeJobId) return;
+            
+            showToast("Cancelando descarga...", "info");
+            
+            if (activeEventSource) {
+                activeEventSource.close();
+                activeEventSource = null;
+            }
 
-            // 💰 Abrir el Smartlink de Adsterra en una pestaña nueva para generar ganancias
-            const smartLink = "https://www.profitablecpmratenetwork.com/tsk9ksw8?key=206a5607049028a772a7a568c6d1838c";
-            window.open(smartLink, "_blank");
-
-            // ⬇️ Empieza la descarga del video en la pestaña actual
-            download();
+            try {
+                await fetch(`/api/cancel/${activeJobId}`, { method: "POST" });
+            } catch (e) {
+                console.error("Error al notificar cancelación:", e);
+            }
+            
+            showToast("Proceso cancelado por el usuario.", "info");
+            resetUiState();
         }
 
-        // Registrar Service Worker para poder ser instalada (PWA)
+        function resetUiState() {
+            document.getElementById("statusContainer").style.display = "none";
+            document.getElementById("previewCard").style.display = "flex";
+            document.getElementById("analyzeBtn").disabled = false;
+            activeJobId = null;
+        }
+
+        // PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById("pwaBanner").style.display = "flex";
+        });
+
+        async function installPWA() {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                showToast("¡Gracias por instalar FastTok!", "success");
+            }
+            deferredPrompt = null;
+            document.getElementById("pwaBanner").style.display = "none";
+        }
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js').catch(error => {
-                    console.log('Fallo el registro del Service Worker:', error);
+                    console.log('Error registrando Service Worker:', error);
                 });
             });
         }
-    </script>
 
-    <!-- Scripts de Adsterra (Social Bar y Popunder) -->
-    <script type="text/javascript"
-        src="//pl29080783.profitablecpmratenetwork.com/7c/16/bd/7c16bd3096db3b3f54157345620814f4.js"></script>
-    <script type="text/javascript"
-        src="//pl29080782.profitablecpmratenetwork.com/50/26/2b/50262b6046fd6b5f2684e8b9f0840880.js"></script>
+        // ==================== NUEVA LÓGICA DE INTERFAZ PROFESIONAL ====================
+
+        // Inicialización de Tema al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            } else {
+                document.documentElement.classList.remove('light-theme');
+            }
+        });
+
+        // Alternar modo claro/oscuro
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('light-theme')) {
+                html.classList.remove('light-theme');
+                localStorage.setItem('theme', 'dark');
+                showToast("Modo Oscuro activado", "info");
+            } else {
+                html.classList.add('light-theme');
+                localStorage.setItem('theme', 'light');
+                showToast("Modo Claro activado", "info");
+            }
+        }
+
+        // Alternar el menú hamburguesa móvil
+        function toggleMenu(force) {
+            const menu = document.getElementById("navMenu");
+            const btn = document.getElementById("hamburgerBtn");
+            
+            if (force === false) {
+                menu.classList.remove("active");
+                btn.classList.remove("active");
+            } else {
+                menu.classList.toggle("active");
+                btn.classList.toggle("active");
+            }
+        }
+
+        // Configuración de textos y estilos de marca por plataforma
+        const platformConfigs = {
+            tiktok: {
+                title: "TikTok Downloader",
+                subtitle: "Descarga videos y audio de TikTok de manera independiente y segura.",
+                placeholder: "Pega el enlace de TikTok aquí...",
+                icon: "📱",
+                themeClass: "theme-tiktok"
+            },
+            youtube: {
+                title: "YouTube Downloader",
+                subtitle: "Descarga videos de YouTube y conviértelos a MP3/MP4 al instante.",
+                placeholder: "Pega el enlace de YouTube (Video o Shorts) aquí...",
+                icon: "🎥",
+                themeClass: "theme-youtube"
+            },
+            instagram: {
+                title: "Instagram Downloader",
+                subtitle: "Descarga Reels, videos y fotos de Instagram en alta calidad.",
+                placeholder: "Pega el enlace de Instagram (Reels o Video) aquí...",
+                icon: "📸",
+                themeClass: "theme-instagram"
+            },
+            facebook: {
+                title: "Facebook Downloader",
+                subtitle: "Descarga videos de Facebook en HD directamente a tu dispositivo.",
+                placeholder: "Pega el enlace de Facebook Video aquí...",
+                icon: "👥",
+                themeClass: "theme-facebook"
+            },
+            twitter: {
+                title: "Twitter / X Downloader",
+                subtitle: "Descarga videos y GIFs de Twitter / X en segundos.",
+                placeholder: "Pega el enlace de la publicación de X (Twitter) aquí...",
+                icon: "🐦",
+                themeClass: "theme-twitter"
+            },
+            twitch: {
+                title: "Twitch Downloader",
+                subtitle: "Descarga clips y transmisiones grabadas (VODs) de Twitch.",
+                placeholder: "Pega el enlace del clip o video de Twitch aquí...",
+                icon: "🎮",
+                themeClass: "theme-twitch"
+            },
+            soundcloud: {
+                title: "SoundCloud Downloader",
+                subtitle: "Descarga pistas de música y audios de SoundCloud en formato MP3.",
+                placeholder: "Pega el enlace de la canción de SoundCloud aquí...",
+                icon: "🎵",
+                themeClass: "theme-soundcloud"
+            },
+            pinterest: {
+                title: "Pinterest Downloader",
+                subtitle: "Descarga videos e imágenes de pines de Pinterest de forma directa.",
+                placeholder: "Pega el enlace del pin de Pinterest aquí...",
+                icon: "📌",
+                themeClass: "theme-pinterest"
+            }
+        };
+
+        // Cambiar dinámicamente el tema y textos de la tarjeta principal
+        function selectPlatform(platformKey) {
+            const config = platformConfigs[platformKey];
+            if (!config) return;
+
+            // 1. Cambiar los textos de la tarjeta principal
+            document.getElementById("downloaderTitle").textContent = config.title;
+            document.getElementById("downloaderSubtitle").textContent = config.subtitle;
+            document.getElementById("downloaderLogoIcon").textContent = config.icon;
+            document.getElementById("url").placeholder = config.placeholder;
+
+            // 2. Aplicar la clase de tema CSS
+            const card = document.querySelector(".card");
+            
+            // Remover otras clases de marcas
+            Object.values(platformConfigs).forEach(cfg => {
+                card.classList.remove(cfg.themeClass);
+            });
+            
+            // Añadir la clase del tema seleccionado (excepto para tiktok que es el predeterminado)
+            if (platformKey !== "tiktok") {
+                card.classList.add(config.themeClass);
+            }
+
+            // 3. Desplazar suavemente a la sección de descargas
+            document.getElementById("downloader").scrollIntoView({ behavior: 'smooth' });
+            
+            showToast(`Modo ${config.title} activado`, "success");
+        }
+    </script>
 </body>
 
 </html>

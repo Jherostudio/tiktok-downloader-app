@@ -1,0 +1,14 @@
+node_modules/
+npm-debug.log
+temp/
+.git/
+.gitignore
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+.DS_Store
+.system_generated/
+artifacts/
+*.log
