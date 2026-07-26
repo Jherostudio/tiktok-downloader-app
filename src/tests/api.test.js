@@ -1,14 +1,20 @@
 vi.mock("../services/metadata.service", () => ({
-    fetchVideoMetadata: vi.fn().mockResolvedValue({
-        id: "12345",
-        title: "Video Test",
-        creator: "Test User",
-        thumbnail: "https://www.tiktok.com/logo.png",
-        duration: 15,
-        formats: [
-            { id: "mp3", type: "audio", container: "mp3", quality: "Audio (320kbps)" },
-            { id: "original", type: "video", container: "mp4", quality: "Calidad Original" }
-        ]
+    fetchVideoMetadata: vi.fn().mockImplementation(async (url) => {
+        // Extraer ID de la URL como lo hace yt-dlp real
+        const videoIdMatch = url.match(/video\/(\d+)/);
+        const videoId = videoIdMatch ? videoIdMatch[1] : "v123";
+        
+        return Promise.resolve({
+            id: videoId,  // ← Ahora devuelve el ID correcto
+            title: "Video Test",
+            creator: "Test User",
+            thumbnail: "https://www.tiktok.com/logo.png",
+            duration: 15,
+            formats: [
+                { id: "mp3", type: "audio", container: "mp3", quality: "Audio (320kbps)" },
+                { id: "original", type: "video", container: "mp4", quality: "Calidad Original" }
+            ]
+        });
     })
 }));
 
