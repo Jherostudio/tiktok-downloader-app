@@ -1,5 +1,4 @@
 const request = require("supertest");
-const app = require("../app");
 
 // Mock de child_process para simular yt-dlp y ffmpeg
 vi.mock("child_process", () => ({
@@ -48,6 +47,8 @@ vi.mock("../services/metadata.service", () => ({
         ]
     })
 }));
+
+const app = require("../app");
 
 describe("Rutas de la API e Integración", () => {
     
