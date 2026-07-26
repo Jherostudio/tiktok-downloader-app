@@ -1,6 +1,6 @@
 vi.mock("../services/metadata.service", () => ({
     fetchVideoMetadata: vi.fn().mockResolvedValue({
-        id: "v123",
+        id: "12345",
         title: "Video Test",
         creator: "Test User",
         thumbnail: "https://www.tiktok.com/logo.png",
@@ -84,7 +84,7 @@ describe("Rutas de la API e Integración", () => {
                 
             expect(res.statusCode).toBe(200);
             expect(res.body.success).toBe(true);
-            expect(res.body.data.id).toBe("v123");
+            expect(res.body.data.id).toBe("12345");
             expect(res.body.data.title).toBe("Video Test");
             expect(res.body.data.formats).toHaveLength(2);
             expect(res.body.data.formats[0].token).toBeDefined(); // Token generado
