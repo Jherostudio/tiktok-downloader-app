@@ -17,14 +17,20 @@ jobs:
     - name: Configurar Node.js
       uses: actions/setup-node@v4
       with:
-        node-size: 20
+        node-version: 20  # CORREGIDO: era "node-size", ahora "node-version"
         cache: 'npm'
 
-    - name: Instalar dependencias
+    - name: Instalar dependencias del sistema  # NUEVO
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg python3 python3-pip
+        pip install yt-dlp
+
+    - name: Instalar dependencias de npm
       run: npm ci
 
     - name: Ejecutar Auditoría de Seguridad
-      run: npm audit --audit-level=high || true # No abortar por warnings menores, pero registrar en log
+      run: npm audit --audit-level=high || true
 
     - name: Ejecutar Pruebas Automatizadas
       run: npm test
@@ -42,3 +48,5 @@ jobs:
     - name: Compilar Imagen Docker (Prueba)
       run: |
         docker build -t fasttok-test-build .
+
+        
