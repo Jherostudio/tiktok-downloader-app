@@ -1,5 +1,3 @@
-const { describe, it, expect, vi, beforeEach } = require("vitest");
-
 // Mock de las funciones de red nativas para evitar tráfico real
 vi.mock("dns", () => ({
     promises: {
